@@ -13,7 +13,7 @@ COPY . /src
 RUN make
 
 FROM alpine:latest
-LABEL org.opencontainers.image.source="https://github.com/heiher/hev-socks5-tunnel"
+LABEL org.opencontainers.image.source="https://github.com/the-toxin/hev-socks5-tunnel"
 
 RUN apk add --update --no-cache \
     iproute2
