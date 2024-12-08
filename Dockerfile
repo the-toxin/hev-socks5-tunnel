@@ -12,11 +12,10 @@ COPY . /src
 
 RUN make
 
+
 FROM alpine:latest
 LABEL org.opencontainers.image.source="https://github.com/the-toxin/hev-socks5-tunnel"
-
-RUN apk add --update --no-cache \
-    iproute2
+LABEL version="2.7.5-1"
 
 ENV TUN=tun0 \
     MTU=8500 \
@@ -33,9 +32,13 @@ ENV TUN=tun0 \
     IPV4_EXCLUDED_ROUTES='' \
     LOG_LEVEL=warn
 
-HEALTHCHECK --start-period=5s --interval=5s --timeout=2s --retries=3 CMD ["test", "-f", "/success"]
+COPY --from=builder /src/bin/hev-socks5-tunnel /usr/bin/hev-socks5-tunnel
 
 COPY --chmod=755 docker/entrypoint.sh /entrypoint.sh
-COPY --from=builder /src/bin/hev-socks5-tunnel /usr/bin/hev-socks5-tunnel
+
+RUN apk add --update --no-cache \
+    iproute2
+
+HEALTHCHECK --start-period=5s --interval=5s --timeout=2s --retries=3 CMD ["test", "-f", "/success"]
 
 ENTRYPOINT ["/entrypoint.sh"]
